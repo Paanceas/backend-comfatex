@@ -3,23 +3,23 @@
 /**
  * Dev configuration
  */
- define('ENVIRONMENT','development');
+ define('ENVIRONMENT', ($_ENV['ENVIRONMENT'] ?? 'development'));
  
- define('ROOT_PATH',__DIR__);
- define('PATH',dirname(dirname(__FILE__)));
+ define('ROOT_PATH', __DIR__);
+ define('PATH', dirname(dirname(__FILE__)));
 
 
 /**
  * Database configuration
  */
 
-define('DB_USERNAME', 'root');
-define('DB_PASSWORD', '123456');
-define('DB_HOST', 'localhost');
-define('DB_NAME', 'siegvadbd');
+define('DB_USERNAME', ($_ENV['DB_USERNAME'] ?? 'root'));
+define('DB_PASSWORD', ($_ENV['DB_PASSWORD'] ?? '123456'));
+define('DB_HOST', ($_ENV['DB_HOST'] ?? 'localhost'));
+define('DB_NAME', ($_ENV['DB_NAME'] ?? 'siegvadbd'));
 
 //referencia generado con MD5(uniqueid(<some_string>, true))
-define('API_KEY','828fbcc651f82f21e0b6fc0c23a4f5c4');
+define('API_KEY', ($_ENV['API_KEY'] ?? '828fbcc651f82f21e0b6fc0c23a4f5c4'));
 
 /**
  * API Response HTTP CODE
