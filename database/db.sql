@@ -18,7 +18,8 @@ CREATE TABLE `tallas` (
 `cintura_maxima` int NOT NULL,
 `cadera_minima` int NOT NULL,
 `cadera_maxima` int NOT NULL,
-PRIMARY KEY(`id_talla`))
+PRIMARY KEY(`id_talla`),
+UNIQUE(`talla`))
 ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*================
