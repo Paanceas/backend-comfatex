@@ -91,6 +91,13 @@
         line-height: 1;
       }
 
+      .text-small {
+        font-size: 16px;
+        color: #fff;
+        font-weight: normal;
+        margin: 0 auto;
+        line-height: 1;
+      }
       .title {
         font-size: 120px;
         color: #fff;
@@ -104,7 +111,7 @@
       .icon_500:after {
         content: "";
         display: block;
-        width: 202px;
+        width: 460px;
         height: 202px;
         margin: 40px auto;
         background-repeat: no-repeat;
@@ -211,9 +218,10 @@
       }
     </style>
     <div class="layout">
-      <div class="title">SIEGVAD Comfatex Api Rest </div>
-      <div class="text">Version 1.0.5</div>
+      <div class="text">SIEGVAD Comfatex</div>
+      <div class="title icon_500"> Api Rest </div>
       <div class="text">Ucompensar</div>
+      <div class="text-small">Version 1.0.5</div>
     </div>
   </body>
 </html>
