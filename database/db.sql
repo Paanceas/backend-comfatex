@@ -63,7 +63,7 @@ CREATE TABLE `roll` (
 PRIMARY KEY(`tipo_roll`))
 ENGINE=InnoDB DEFAULT CHARSET=utf8;
 INSERT INTO `siegvadbd`.`roll` (`tipo_roll`)
-VALUES ('Cliente'), ('Administrador'), ('Vendedor'), ('Asistente');
+VALUES ('Cliente'), ('Administrador'), ('Vendedor'), ('Asistente'), ('Virtual');
 
 /*================
 TABLA VISTAS
@@ -105,7 +105,8 @@ FOREIGN KEY (`tipo_roll`) REFERENCES `roll` (`tipo_roll`))
 ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 INSERT INTO `siegvadbd`.`usuarios` (`tipo_roll`,`email_usuario`,`password_usuario`,`activo_usuario`)
-VALUES ('Administrador','admin@siegvad.com','2df589749f656253ff8c3309ca8bfab79fd9284b863038ecadbb2158061f577b',1),
+VALUES ('Virtual','ventas@siegvad.com','2df589749f656253ff8c3309ca8bfab79fd9284b863038ecadbb2158061f577b',1),
+('Administrador','admin@siegvad.com','2df589749f656253ff8c3309ca8bfab79fd9284b863038ecadbb2158061f577b',1),
 ('Vendedor','vendedor@siegvad.com','2df589749f656253ff8c3309ca8bfab79fd9284b863038ecadbb2158061f577b',1),
 ('Asistente','asistente@siegvad.com','2df589749f656253ff8c3309ca8bfab79fd9284b863038ecadbb2158061f577b',1);
 
@@ -127,14 +128,15 @@ FOREIGN KEY (`id_estado_empleado`) REFERENCES `estado_empleado` (`id_estado_empl
 ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 INSERT INTO `siegvadbd`.`empleados` (`id_usuario`,`id_estado_empleado`,`email_empleado`,`nombre_empleado`,`apellido_empleado`)
-VALUES (1,1,'admin@siegvad.com','Pablo','Ceballos'),
-(2,1,'vendedor@siegvad.com','Vendedor','Prueba'),
-(3,1,'asistente@siegvad.com','Asistente','Pruebas');
+VALUES (1,1,'virtual','Vendedor','Virtual'),
+(2,1,'admin@siegvad.com','Pablo','Ceballos'),
+(3,1,'vendedor@siegvad.com','Vendedor','Prueba'),
+(4,1,'asistente@siegvad.com','Asistente','Pruebas');
 
 /*================
 TABLA cliente
 ================*/
-CREATE TABLE `cliente` (
+CREATE TABLE `clientes` (
 `id_cliente` int NOT NULL AUTO_INCREMENT,
 `id_usuario` int NOT NULL,
 `email_cliente` varchar(50) NOT NULL,
@@ -155,6 +157,7 @@ TABLA orden
 CREATE TABLE `orden` (
 `id_orden` int NOT NULL AUTO_INCREMENT,
 `id_cliente` int NOT NULL,
+`id_empleado` int NOT NULL,
 `id_estado` int NOT NULL default 1,
 `direccion_orden` varchar(50) NOT NULL UNIQUE,
 `latitud_direccion_orden` varchar(200) NULL,
@@ -163,7 +166,8 @@ CREATE TABLE `orden` (
 `fecha_entrega_orden` date DEFAULT NULL,
 `total_orden` int NOT NULL,
 PRIMARY KEY(`id_orden`),
-FOREIGN KEY (`id_cliente`) REFERENCES `cliente` (`id_cliente`),
+FOREIGN KEY (`id_empleado`) REFERENCES `empleados` (`id_empleado`),
+FOREIGN KEY (`id_cliente`) REFERENCES `clientes` (`id_cliente`),
 FOREIGN KEY (`id_estado`) REFERENCES `estado` (`id_estado`))
 ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

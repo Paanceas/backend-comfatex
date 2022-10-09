@@ -62,7 +62,8 @@ DROP PROCEDURE IF EXISTS `getEstadosEmpleado`;
 CREATE PROCEDURE `getEstadosEmpleado` ()
 BEGIN
 	SELECT id_estado_empleado, tipo_estado_empleado
-	FROM siegvadbd.estado_empleado;
+	FROM siegvadbd.estado_empleado
+	WHERE email_empleado <> 'virtual';
 END$$
 DELIMITER ;
 -- CONSULTA LOS ESTADOS DEL PAGO
@@ -82,7 +83,8 @@ DROP PROCEDURE IF EXISTS `getRoll`;
 CREATE PROCEDURE `getRoll` ()
 BEGIN
 	SELECT tipo_roll
-	FROM siegvadbd.roll;
+	FROM siegvadbd.roll
+	WHERE tipo_roll <> 'Virtual';
 END$$
 DELIMITER ;
 -- CONSULTA LAS VISTAS
@@ -145,5 +147,116 @@ BEGIN
 		WHERE id_roll_por_vistas = i_vista_roll;
 		SELECT i_vista_roll as id_roll_por_vistas;
 	END IF;
+END$$
+DELIMITER ;
+/*Login*/
+DELIMITER $$
+USE `siegvadbd`$$
+DROP PROCEDURE IF EXISTS `getLogin`;
+CREATE PROCEDURE `getLogin` (in usuario varchar(50), in con varchar(300))
+BEGIN
+	SELECT u.id_usuario, r.tipo_roll as roll, u.nombre_usuario as usuario, u.eliminar as estado
+    FROM siegvadbd.usuarios u
+    INNER JOIN siegvadbd.roll r on r.tipo_roll = u.tipo_roll
+	WHERE u.email_usuario = usuario and u.clave = con;
+END$$
+DELIMITER ;
+/*Existe Usuario Empleado*/
+DELIMITER $$
+USE `siegvadbd`$$
+DROP PROCEDURE IF EXISTS `getExisteUsuarioEmpleado`;
+CREATE PROCEDURE `getExisteUsuarioEmpleado` (in usuario varchar(50))
+BEGIN
+	SELECT u.id_usuario, r.tipo_roll as roll, u.nombre_usuario as usuario, u.eliminar as estado
+    FROM siegvadbd.usuarios u
+    INNER JOIN siegvadbd.roll r on r.tipo_roll = u.tipo_roll
+	WHERE u.email_usuario = usuario and (r.tipo_roll <> 'Cliente' AND r.tipo_roll <> 'Virtual');
+END$$
+DELIMITER ;
+/*Existe Usuario Cliente*/
+DELIMITER $$
+USE `siegvadbd`$$
+DROP PROCEDURE IF EXISTS `getExisteUsuarioCliente`;
+CREATE PROCEDURE `getExisteUsuarioCliente` (in usuario varchar(50))
+BEGIN
+	SELECT u.id_usuario, r.tipo_roll as roll, u.nombre_usuario as usuario, u.eliminar as estado
+    FROM siegvadbd.usuarios u
+    INNER JOIN siegvadbd.roll r on r.tipo_roll = u.tipo_roll
+	WHERE u.email_usuario = usuario and r.tipo_roll = 'Cliente';
+END$$
+DELIMITER ;
+/*Creacion de Usuario*/
+DELIMITER $$
+USE `siegvadbd`$$
+DROP PROCEDURE IF EXISTS `setUsuario`;
+CREATE PROCEDURE `setUsuario` (in usuario varchar(50), in con varchar(256), in roll varchar(25))
+BEGIN
+	DECLARE i_email INT;
+	SELECT id_usuario into i_email
+	FROM siegvadbd.usuarios
+	WHERE email_usuario = usuario;
+
+	IF i_email IS NULL THEN
+		INSERT INTO siegvadbd.usuarios (tipo_roll, email_usuario, password_usuario)
+		VALUES (roll, usuario, con);
+		SELECT LAST_INSERT_ID() as id_usuario, 0 as exist_usuario;
+	ELSE
+		SELECT i_email as id_usuario, 1 as exist_usuario;
+	END IF;
+END$$
+DELIMITER ;
+/*Actualzacion de Usuario*/
+DELIMITER $$
+USE `siegvadbd`$$
+DROP PROCEDURE IF EXISTS `updUsuario`;
+CREATE PROCEDURE `updUsuario` (in usuario varchar(50), in con varchar(256), in roll varchar(25), in activo boolean)
+BEGIN
+	DECLARE i_email INT;
+	SELECT id_usuario into i_email
+	FROM siegvadbd.usuarios
+	WHERE email_usuario = usuario;
+
+	IF i_email IS NULL THEN
+		UPDATE siegvadbd.usuarios 
+		SET tipo_roll=roll,
+		password_usuario=con,
+		activo=activo_usuario
+		WHERE id_usuario = i_email;
+	END IF;
+END$$
+DELIMITER ;
+/*Consulta de Usuarios Empleados*/
+DELIMITER $$
+USE `siegvadbd`$$
+DROP PROCEDURE IF EXISTS `getUsuariosEmpleados`;
+CREATE PROCEDURE `getUsuariosEmpleados` ()
+BEGIN
+	SELECT u.id_usuario, r.tipo_roll as roll, e.id_empleado, e.fecha_creacion_empleado, e.apellido_empleado, e.nombre_empleado, ee.tipo_estado_empleado 
+    FROM siegvadbd.usuarios u
+    INNER JOIN siegvadbd.roll r on r.tipo_roll = u.tipo_roll
+	INNER JOIN siegvadbd.empleados e on e.id_usuario = u.id_usuario
+	INNER JOIN siegvadbd.estado_empleado ee on ee.id_estado_empleado = e.id_estado_empleado
+	WHERE r.tipo_roll <> 'Cliente' AND r.tipo_roll <> 'Virtual';
+END$$
+DELIMITER ;
+/*Consulta de Usuarios Clientes*/
+DELIMITER $$
+USE `siegvadbd`$$
+DROP PROCEDURE IF EXISTS `getUsuariosClientes`;
+CREATE PROCEDURE `getUsuariosClientes` ()
+BEGIN
+	SELECT u.id_usuario, 
+	c.id_cliente,
+	r.tipo_roll as roll,
+	c.email_cliente,
+	c.nombre_cliente,
+	c.apellido_cliente,
+	c.direccion_cliente,
+	c.telefono_cliente,
+	c.fecha_creacion_cliente
+    FROM siegvadbd.usuarios u
+    INNER JOIN siegvadbd.roll r on r.tipo_roll = u.tipo_roll
+	INNER JOIN siegvadbd.clientes c on c.id_usuario = u.id_usuario
+	WHERE r.tipo_roll = 'Cliente';
 END$$
 DELIMITER ;
