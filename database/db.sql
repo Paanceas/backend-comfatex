@@ -31,7 +31,7 @@ CREATE TABLE `estado`
 PRIMARY KEY(`id_estado`))
 ENGINE=InnoDB DEFAULT CHARSET=utf8;
 INSERT INTO `siegvadbd`.`estado` (`tipo_estado`)
-VALUES ('EN VALIDANDO'), ('CONFIRMADA'), ('EN PREPARACIÓN'), ('EN RUTA'), ('ENTREGADO'), ('CANCELADO');
+VALUES ('CREADA'), ('EN VALIDANDO'), ('CONFIRMADA'), ('EN PREPARACIÓN'), ('EN RUTA'), ('ENTREGADO'), ('CANCELADO');
 
 /*================
 TABLA ESTADO EMPLEADO
@@ -223,11 +223,3 @@ PRIMARY KEY(`id_productos_por_orden`),
 FOREIGN KEY (`id_productos_por_tallas`) REFERENCES `productos_por_tallas` (`id_productos_por_tallas`),
 FOREIGN KEY (`id_orden`) REFERENCES `orden` (`id_orden`))
 ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-
-
-
-
-
-
-

@@ -85,3 +85,65 @@ BEGIN
 	FROM siegvadbd.roll;
 END$$
 DELIMITER ;
+-- CONSULTA LAS VISTAS
+DELIMITER $$
+USE `siegvadbd`$$
+DROP PROCEDURE IF EXISTS `getVistas`;
+CREATE PROCEDURE `getVistas` (IN roll_r VARCHAR(25))
+BEGIN
+	SELECT v.id_vista, v.nombre_vista, v.path_vista, v.icon_vista, v.activo
+	FROM siegvadbd.vistas v
+	INNER JOIN siegvadbd.roll_por_vistas vr on vr.id_vista = v.id_vista
+	INNER JOIN siegvadbd.roll r on r.tipo_roll = vr.tipo_roll
+	WHERE vr.activo_vistas = 1 AND r.tipo_roll = roll_r;
+END$$
+DELIMITER ;
+-- CREACION DE VISTAS
+DELIMITER $$
+USE `siegvadbd`$$
+DROP PROCEDURE IF EXISTS `setVistas`;
+CREATE PROCEDURE `setVistas` (IN nombre_vista_r varchar(50),IN path_vista_r varchar(50),IN icon_vista_r varchar(50),IN activo_r boolean)
+BEGIN
+	INSERT INTO siegvadbd.vistas (nombre_vista, path_vista, icon_vista, activo)
+	VALUES (nombre_vista_r, path_vista_r, icon_vista_r, activo_r);
+	SELECT LAST_INSERT_ID() as id_vista;
+END$$
+DELIMITER ;
+-- ACTUALIZACIÓN DE VISTAS
+DELIMITER $$
+USE `siegvadbd`$$
+DROP PROCEDURE IF EXISTS `updVistas`;
+CREATE PROCEDURE `updVistas` (IN nombre_vista_r varchar(50),IN path_vista_r varchar(50),IN icon_vista_r varchar(50))
+BEGIN
+	UPDATE siegvadbd.vistas 
+	SET nombre_vista=nombre_vista_r,
+	path_vista=path_vista_r, 
+	icon_vista=icon_vista_r
+	WHERE id_vista = id_vista_R;
+END$$
+DELIMITER ;
+-- CREACION DE VISTAS POR ROLL
+DELIMITER $$
+USE `siegvadbd`$$
+DROP PROCEDURE IF EXISTS `setVistasRoll`;
+CREATE PROCEDURE `setVistasRoll` (IN id_vista_r INT(11), IN tipo_roll_r varchar(25), IN activo_vistas_r boolean)
+BEGIN
+	DECLARE i_vista_roll INT;
+	SELECT id_roll_por_vistas into i_vista_roll
+	FROM siegvadbd.roll_por_vistas 
+	WHERE id_vista = id_vista_r AND tipo_roll = tipo_roll_r;
+
+	IF i_vista_roll IS NULL THEN
+		INSERT INTO siegvadbd.roll_por_vistas (id_vista,tipo_roll)
+		VALUES (id_vista_r,tipo_roll_r);
+		SELECT LAST_INSERT_ID() as id_talla;
+	ELSE
+		UPDATE siegvadbd.roll_por_vistas 
+		SET id_vista=id_vista_r, 
+		tipo_roll=tipo_roll_r, 
+		activo_vistas=activo_vistas_r
+		WHERE id_roll_por_vistas = i_vista_roll;
+		SELECT i_vista_roll as id_roll_por_vistas;
+	END IF;
+END$$
+DELIMITER ;
