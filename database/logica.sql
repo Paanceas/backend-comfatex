@@ -1,0 +1,9 @@
+-- VALIDAR ESTADO DE LA BD
+DELIMITER $$
+USE `siegvadbd`$$
+DROP PROCEDURE IF EXISTS `getBaseDatos`;
+CREATE PROCEDURE `getBaseDatos` ()
+BEGIN
+	SELECT NOW() as fecha;
+END$$
+DELIMITER ;

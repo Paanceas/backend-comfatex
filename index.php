@@ -212,8 +212,8 @@
     </style>
     <div class="layout">
       <div class="title">SIEGVAD Comfatex Api Rest </div>
-      <div class="text icon_500">Version 1.0.5</div>
-      <div class="text icon_500">Ucompensar</div>
+      <div class="text">Version 1.0.5</div>
+      <div class="text">Ucompensar</div>
     </div>
   </body>
 </html>
