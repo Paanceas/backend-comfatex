@@ -16,7 +16,7 @@
 define('DB_USERNAME', 'root');
 define('DB_PASSWORD', '123456');
 define('DB_HOST', 'localhost');
-define('DB_NAME', 'siegvad');
+define('DB_NAME', 'siegvadbd');
 
 //referencia generado con MD5(uniqueid(<some_string>, true))
 define('API_KEY','828fbcc651f82f21e0b6fc0c23a4f5c4');
