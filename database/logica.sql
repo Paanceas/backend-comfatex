@@ -260,3 +260,87 @@ BEGIN
 	WHERE r.tipo_roll = 'Cliente';
 END$$
 DELIMITER ;
+/*Creacion de Empleado*/
+DELIMITER $$
+USE `siegvadbd`$$
+DROP PROCEDURE IF EXISTS `setEmpleado`;
+CREATE PROCEDURE `setEmpleado` (in id_usuario_r int(11), in email_empleado_r varchar(50), in nombre_empleado_r varchar(70), in apellido_empleado_r varchar(70))
+BEGIN
+	DECLARE i_email INT;
+	SELECT id_empleado into i_email
+	FROM siegvadbd.empleados
+	WHERE email_empleado = email_empleado_r;
+
+	IF i_email IS NULL THEN
+		INSERT INTO siegvadbd.empleados (id_usuario,email_empleado,nombre_empleado,apellido_empleado)
+		VALUES (id_usuario_r,email_empleado_r,nombre_empleado_r,apellido_empleado_r);
+		SELECT LAST_INSERT_ID() as id_empleado, 0 as exist_empleado;
+	ELSE
+		SELECT i_email as id_empleado, 1 as exist_empleado;
+	END IF;
+END$$
+DELIMITER ;
+/*Actualizacion de Empleado*/
+DELIMITER $$
+USE `siegvadbd`$$
+DROP PROCEDURE IF EXISTS `updEmpleado`;
+CREATE PROCEDURE `updEmpleado` (in id_estado_empleado_r int(11), in email_empleado_r varchar(50), in nombre_empleado_r varchar(70), in apellido_empleado_r varchar(70))
+BEGIN
+	DECLARE i_email INT;
+	SELECT id_empleado into i_email
+	FROM siegvadbd.empleados
+	WHERE email_empleado = email_empleado_r;
+
+	IF i_email IS NULL THEN
+		UPDATE siegvadbd.empleados
+		SET nombre_empleado=nombre_empleado_r,
+		apellido_empleado=apellido_empleado_r,
+		id_estado_empleado=id_estado_empleado_r
+		WHERE id_empleado = i_email;
+	END IF;
+END$$
+DELIMITER ;
+/*Creacion de Cliente*/
+DELIMITER $$
+USE `siegvadbd`$$
+DROP PROCEDURE IF EXISTS `setCliente`;
+CREATE PROCEDURE `setCliente` (in id_usuario_r int(11), IN email_cliente_r varchar(50) ,IN nombre_cliente_r varchar(100) ,IN apellido_cliente_r varchar(100) ,IN direccion_cliente_r varchar(200) ,IN telefono_cliente_r varchar(15))
+BEGIN
+	DECLARE i_email INT;
+	SELECT id_cliente into i_email
+	FROM siegvadbd.clientes
+	WHERE email_cliente = clientes;
+
+	IF i_email IS NULL THEN
+		INSERT INTO siegvadbd.clientes (id_usuario,email_cliente,nombre_cliente,apellido_cliente,direccion_cliente,telefono_cliente)
+		VALUES (id_usuario_r,email_cliente_r,nombre_cliente_r,apellido_cliente_r,direccion_cliente_r,telefono_cliente_r);
+		SELECT LAST_INSERT_ID() as id_cliente, 0 as exist_cliente;
+	ELSE
+		SELECT i_email as id_cliente, 1 as exist_cliente;
+	END IF;
+END$$
+DELIMITER ;
+/*Actualizacion de Cliente*/
+DELIMITER $$
+USE `siegvadbd`$$
+DROP PROCEDURE IF EXISTS `updCliente`;
+CREATE PROCEDURE `updCliente` (IN email_cliente_r varchar(50) ,IN nombre_cliente_r varchar(100) ,IN apellido_cliente_r varchar(100) ,IN direccion_cliente_r varchar(200) ,IN telefono_cliente_r varchar(15))
+BEGIN
+	DECLARE i_email INT;
+	SELECT id_cliente into i_email
+	FROM siegvadbd.clientes
+	WHERE email_cliente = email_cliente_r;
+
+	IF i_email IS NULL THEN
+		UPDATE siegvadbd.clientes
+		SET id_usuario=id_usuario_r,
+			email_cliente=email_cliente_r,
+			nombre_cliente=nombre_cliente_r,
+			apellido_cliente=apellido_cliente_r,
+			direccion_cliente=direccion_cliente_r,
+			telefono_cliente=telefono_cliente_r
+		WHERE id_cliente = i_email;
+	END IF;
+END$$
+DELIMITER ;
+
