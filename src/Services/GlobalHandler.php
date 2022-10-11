@@ -10,12 +10,12 @@ class GlobalHandler {
     function __construct() {
         require_once 'CallBD.php';
         $this->global = new CallBD();
-    }   
+    }
 
     public function getValid()
     {
-        $sql = "CALL sisgespro.getBaseDatos();";
-        return $this->global->callDB($sql,'Api funcionando correctamente',false);
+        $sql = "CALL siegvadbd.getBaseDatos();";
+        return $this->global->callDB($sql, 'Api funcionando correctamente', false);
     }
 }
 
