@@ -87,6 +87,19 @@ BEGIN
 	WHERE tipo_roll <> 'Virtual';
 END$$
 DELIMITER ;
+-- CONSULTA LAS ALL VISTAS
+DELIMITER $$
+USE `siegvadbd`$$
+DROP PROCEDURE IF EXISTS `getAllVistas`;
+CREATE PROCEDURE `getAllVistas` ()
+BEGIN
+	SELECT v.id_vista, v.nombre_vista, v.path_vista, v.icon_vista, v.activo
+	FROM siegvadbd.vistas v
+	INNER JOIN siegvadbd.roll_por_vistas vr on vr.id_vista = v.id_vista
+	INNER JOIN siegvadbd.roll r on r.tipo_roll = vr.tipo_roll
+	GROUP BY v.id_vista;
+END$$
+DELIMITER ;
 -- CONSULTA LAS VISTAS
 DELIMITER $$
 USE `siegvadbd`$$
