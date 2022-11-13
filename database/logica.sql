@@ -110,6 +110,20 @@ BEGIN
 	WHERE vr.activo_vistas = 1 AND r.tipo_roll = roll_r;
 END$$
 DELIMITER ;
+-- CONSULTA ROLL POR VISTA
+DELIMITER $$
+USE `siegvadbd`$$
+DROP PROCEDURE IF EXISTS `getVistasRoll`;
+CREATE PROCEDURE `getVistasRoll` (IN id_vista_r INT(11))
+BEGIN
+	SELECT r.tipo_roll
+	FROM siegvadbd.vistas v
+	INNER JOIN siegvadbd.roll_por_vistas vr on vr.id_vista = v.id_vista
+	INNER JOIN siegvadbd.roll r on r.tipo_roll = vr.tipo_roll
+	WHERE v.id_vista = id_vista_r
+	GROUP BY r.tipo_roll;
+END$$
+DELIMITER ;
 -- CREACION DE VISTAS
 DELIMITER $$
 USE `siegvadbd`$$
@@ -135,13 +149,13 @@ DELIMITER ;
 DELIMITER $$
 USE `siegvadbd`$$
 DROP PROCEDURE IF EXISTS `updVistas`;
-CREATE PROCEDURE `updVistas` (IN nombre_vista_r varchar(50),IN path_vista_r varchar(50),IN icon_vista_r varchar(50))
+CREATE PROCEDURE `updVistas` (IN id_vista_r INT(11), IN nombre_vista_r varchar(50),IN path_vista_r varchar(50),IN icon_vista_r varchar(50))
 BEGIN
 	UPDATE siegvadbd.vistas 
 	SET nombre_vista=nombre_vista_r,
 	path_vista=path_vista_r, 
 	icon_vista=icon_vista_r
-	WHERE id_vista = id_vista_R;
+	WHERE id_vista = id_vista_r;
 END$$
 DELIMITER ;
 -- CREACION DE VISTAS POR ROLL

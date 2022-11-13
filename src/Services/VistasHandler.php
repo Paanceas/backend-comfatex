@@ -25,9 +25,19 @@ class VistasHandler {
     public function setVistas($res)
     {
         try {
-            $sql = "CALL siegvadbd.setVistas('".$res['nombre']."','".$res['path']."','".$res['icono']."',1);";
+            $sql = "CALL siegvadbd.setVistas('".$res['nombre_vista']."','".$res['path_vista']."','".$res['icon_vista']."',1);";
+            $this->global->callDBReturn($sql, 'id_vista');
+            return $this->global->resolveCallBD(true, "Vista creada exitosamente");
+        } catch (Exception $e) {
+            return $this->global->resolveCallBD(false, $e);
+        }
+    }
+    public function updVistas($res)
+    {
+        try {
+            $sql = "CALL siegvadbd.updVistas('".$res['id_vista']."','".$res['nombre_vista']."','".$res['path_vista']."','".$res['icon_vista']."');";
             $return = $this->global->callDBReturn($sql, 'id_vista');
-            return $this->global->resolveCallBD(true, "Aquisicion creada exitosamente");
+            return $this->global->resolveCallBD(true, "Vista actualizada exitosamente");
         } catch (Exception $e) {
             return $this->global->resolveCallBD(false, $e);
         }
