@@ -2,7 +2,7 @@
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
-    <title>Error!</title>
+    <title>Api-comfatex</title>
     <link
       href="https://fonts.googleapis.com/css?family=PT+Sans:400,700,400italic&subset=latin,cyrillic"
       rel="stylesheet"

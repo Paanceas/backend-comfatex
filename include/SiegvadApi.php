@@ -102,9 +102,9 @@ class SiegvadApi {
             }
         } else {
             // api key is missing in header
-            $response["status"] = 400;
+            $response["status"] = 401;
             $response["message"] = "Falta token de autorización";
-            $this->echoResponse(400, $response);
+            $this->echoResponse(401, $response);
            exit();
         }
     }
