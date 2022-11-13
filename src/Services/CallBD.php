@@ -82,7 +82,7 @@ class CallBD {
 
     public function resolveCallBD($type, $e){
         if($type){
-            $this->response->status = 200;
+            $this->response->status = 201;
             $this->response->message = $e;
             $this->response->body = null;
         }else{

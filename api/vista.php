@@ -6,11 +6,12 @@
 
     include_once 'common/http.php';
 
-    function get() {
-        $res = $_GET;
-        $api = new SiegvadApi(true, null, null, false);
+    function post() {
+        $json = file_get_contents("php://input",true);
+        $res = json_decode($json, true); 
+        $api = new SiegvadApi(true, array("nombre","path","icono"), $res, true);
         $db = new VistasHandler();
-        $response = $db->getVistas($res);
+        $response = $db->setVistas($res);
         $api->echoResponse($response->status, $response);
     }
 ?>

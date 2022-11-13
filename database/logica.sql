@@ -94,10 +94,7 @@ DROP PROCEDURE IF EXISTS `getAllVistas`;
 CREATE PROCEDURE `getAllVistas` ()
 BEGIN
 	SELECT v.id_vista, v.nombre_vista, v.path_vista, v.icon_vista, v.activo
-	FROM siegvadbd.vistas v
-	INNER JOIN siegvadbd.roll_por_vistas vr on vr.id_vista = v.id_vista
-	INNER JOIN siegvadbd.roll r on r.tipo_roll = vr.tipo_roll
-	GROUP BY v.id_vista;
+	FROM siegvadbd.vistas v;
 END$$
 DELIMITER ;
 -- CONSULTA LAS VISTAS
@@ -119,9 +116,19 @@ USE `siegvadbd`$$
 DROP PROCEDURE IF EXISTS `setVistas`;
 CREATE PROCEDURE `setVistas` (IN nombre_vista_r varchar(50),IN path_vista_r varchar(50),IN icon_vista_r varchar(50),IN activo_r boolean)
 BEGIN
-	INSERT INTO siegvadbd.vistas (nombre_vista, path_vista, icon_vista, activo)
-	VALUES (nombre_vista_r, path_vista_r, icon_vista_r, activo_r);
-	SELECT LAST_INSERT_ID() as id_vista;
+
+	DECLARE i_vista INT;
+	SELECT id_vista into i_vista
+	FROM siegvadbd.vistas 
+	WHERE nombre_vista = nombre_vista_r;
+
+	IF i_vista IS NULL THEN
+		INSERT INTO siegvadbd.vistas (nombre_vista, path_vista, icon_vista, activo)
+		VALUES (nombre_vista_r, path_vista_r, icon_vista_r, activo_r);
+		SELECT LAST_INSERT_ID() as id_vista;
+	ELSE
+		SELECT i_vista as id_vista;
+	END IF;
 END$$
 DELIMITER ;
 -- ACTUALIZACIÓN DE VISTAS
