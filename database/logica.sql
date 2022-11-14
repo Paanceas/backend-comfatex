@@ -107,7 +107,8 @@ BEGIN
 	FROM siegvadbd.vistas v
 	INNER JOIN siegvadbd.roll_por_vistas vr on vr.id_vista = v.id_vista
 	INNER JOIN siegvadbd.roll r on r.tipo_roll = vr.tipo_roll
-	WHERE vr.activo_vistas = 1 AND r.tipo_roll = roll_r;
+	WHERE vr.activo_vistas = 1 AND r.tipo_roll = roll_r
+	ORDER BY v.id_vista;
 END$$
 DELIMITER ;
 -- CONSULTA ROLL POR VISTA
@@ -265,7 +266,7 @@ USE `siegvadbd`$$
 DROP PROCEDURE IF EXISTS `getUsuariosEmpleados`;
 CREATE PROCEDURE `getUsuariosEmpleados` ()
 BEGIN
-	SELECT u.id_usuario, r.tipo_roll as roll, e.id_empleado, e.fecha_creacion_empleado, e.apellido_empleado, e.nombre_empleado, ee.tipo_estado_empleado 
+	SELECT u.id_usuario, r.tipo_roll as roll, e.id_empleado, e.fecha_creacion_empleado, e.apellido_empleado, e.nombre_empleado, e.email_empleado,ee.tipo_estado_empleado 
     FROM siegvadbd.usuarios u
     INNER JOIN siegvadbd.roll r on r.tipo_roll = u.tipo_roll
 	INNER JOIN siegvadbd.empleados e on e.id_usuario = u.id_usuario
@@ -343,7 +344,7 @@ BEGIN
 	DECLARE i_email INT;
 	SELECT id_cliente into i_email
 	FROM siegvadbd.clientes
-	WHERE email_cliente = clientes;
+	WHERE email_cliente = email_cliente_r;
 
 	IF i_email IS NULL THEN
 		INSERT INTO siegvadbd.clientes (id_usuario,email_cliente,nombre_cliente,apellido_cliente,direccion_cliente,telefono_cliente)
