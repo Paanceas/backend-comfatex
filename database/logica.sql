@@ -214,7 +214,7 @@ USE `siegvadbd`$$
 DROP PROCEDURE IF EXISTS `getExisteUsuarioCliente`;
 CREATE PROCEDURE `getExisteUsuarioCliente` (in usuario varchar(50))
 BEGIN
-	SELECT u.id_usuario, r.tipo_roll as roll, u.nombre_usuario as usuario, u.eliminar as estado
+	SELECT u.id_usuario, r.tipo_roll, u.email_usuario, u.activo_usuario
     FROM siegvadbd.usuarios u
     INNER JOIN siegvadbd.roll r on r.tipo_roll = u.tipo_roll
 	WHERE u.email_usuario = usuario and r.tipo_roll = 'Cliente';
@@ -366,10 +366,9 @@ BEGIN
 	FROM siegvadbd.clientes
 	WHERE email_cliente = email_cliente_r;
 
-	IF i_email IS NULL THEN
+	IF i_email IS NOT NULL THEN
 		UPDATE siegvadbd.clientes
-		SET id_usuario=id_usuario_r,
-			email_cliente=email_cliente_r,
+		SET email_cliente=email_cliente_r,
 			nombre_cliente=nombre_cliente_r,
 			apellido_cliente=apellido_cliente_r,
 			direccion_cliente=direccion_cliente_r,
