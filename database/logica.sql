@@ -87,6 +87,16 @@ BEGIN
 	WHERE tipo_roll <> 'Virtual';
 END$$
 DELIMITER ;
+-- CONSULTA LAS ALL VISTAS
+DELIMITER $$
+USE `siegvadbd`$$
+DROP PROCEDURE IF EXISTS `getAllVistas`;
+CREATE PROCEDURE `getAllVistas` ()
+BEGIN
+	SELECT v.id_vista, v.nombre_vista, v.path_vista, v.icon_vista, v.activo
+	FROM siegvadbd.vistas v;
+END$$
+DELIMITER ;
 -- CONSULTA LAS VISTAS
 DELIMITER $$
 USE `siegvadbd`$$
@@ -97,7 +107,22 @@ BEGIN
 	FROM siegvadbd.vistas v
 	INNER JOIN siegvadbd.roll_por_vistas vr on vr.id_vista = v.id_vista
 	INNER JOIN siegvadbd.roll r on r.tipo_roll = vr.tipo_roll
-	WHERE vr.activo_vistas = 1 AND r.tipo_roll = roll_r;
+	WHERE vr.activo_vistas = 1 AND r.tipo_roll = roll_r
+	ORDER BY v.id_vista;
+END$$
+DELIMITER ;
+-- CONSULTA ROLL POR VISTA
+DELIMITER $$
+USE `siegvadbd`$$
+DROP PROCEDURE IF EXISTS `getVistasRoll`;
+CREATE PROCEDURE `getVistasRoll` (IN id_vista_r INT(11))
+BEGIN
+	SELECT r.tipo_roll
+	FROM siegvadbd.vistas v
+	INNER JOIN siegvadbd.roll_por_vistas vr on vr.id_vista = v.id_vista
+	INNER JOIN siegvadbd.roll r on r.tipo_roll = vr.tipo_roll
+	WHERE v.id_vista = id_vista_r
+	GROUP BY r.tipo_roll;
 END$$
 DELIMITER ;
 -- CREACION DE VISTAS
@@ -106,22 +131,32 @@ USE `siegvadbd`$$
 DROP PROCEDURE IF EXISTS `setVistas`;
 CREATE PROCEDURE `setVistas` (IN nombre_vista_r varchar(50),IN path_vista_r varchar(50),IN icon_vista_r varchar(50),IN activo_r boolean)
 BEGIN
-	INSERT INTO siegvadbd.vistas (nombre_vista, path_vista, icon_vista, activo)
-	VALUES (nombre_vista_r, path_vista_r, icon_vista_r, activo_r);
-	SELECT LAST_INSERT_ID() as id_vista;
+
+	DECLARE i_vista INT;
+	SELECT id_vista into i_vista
+	FROM siegvadbd.vistas 
+	WHERE nombre_vista = nombre_vista_r;
+
+	IF i_vista IS NULL THEN
+		INSERT INTO siegvadbd.vistas (nombre_vista, path_vista, icon_vista, activo)
+		VALUES (nombre_vista_r, path_vista_r, icon_vista_r, activo_r);
+		SELECT LAST_INSERT_ID() as id_vista;
+	ELSE
+		SELECT i_vista as id_vista;
+	END IF;
 END$$
 DELIMITER ;
 -- ACTUALIZACIÓN DE VISTAS
 DELIMITER $$
 USE `siegvadbd`$$
 DROP PROCEDURE IF EXISTS `updVistas`;
-CREATE PROCEDURE `updVistas` (IN nombre_vista_r varchar(50),IN path_vista_r varchar(50),IN icon_vista_r varchar(50))
+CREATE PROCEDURE `updVistas` (IN id_vista_r INT(11), IN nombre_vista_r varchar(50),IN path_vista_r varchar(50),IN icon_vista_r varchar(50))
 BEGIN
 	UPDATE siegvadbd.vistas 
 	SET nombre_vista=nombre_vista_r,
 	path_vista=path_vista_r, 
 	icon_vista=icon_vista_r
-	WHERE id_vista = id_vista_R;
+	WHERE id_vista = id_vista_r;
 END$$
 DELIMITER ;
 -- CREACION DE VISTAS POR ROLL
@@ -155,10 +190,10 @@ USE `siegvadbd`$$
 DROP PROCEDURE IF EXISTS `getLogin`;
 CREATE PROCEDURE `getLogin` (in usuario varchar(50), in con varchar(300))
 BEGIN
-	SELECT u.id_usuario, r.tipo_roll as roll, u.nombre_usuario as usuario, u.eliminar as estado
+	SELECT u.id_usuario, r.tipo_roll as roll, u.email_usuario as usuario, u.activo_usuario as estado
     FROM siegvadbd.usuarios u
     INNER JOIN siegvadbd.roll r on r.tipo_roll = u.tipo_roll
-	WHERE u.email_usuario = usuario and u.clave = con;
+	WHERE u.email_usuario = usuario and u.password_usuario = con;
 END$$
 DELIMITER ;
 /*Existe Usuario Empleado*/
@@ -179,7 +214,7 @@ USE `siegvadbd`$$
 DROP PROCEDURE IF EXISTS `getExisteUsuarioCliente`;
 CREATE PROCEDURE `getExisteUsuarioCliente` (in usuario varchar(50))
 BEGIN
-	SELECT u.id_usuario, r.tipo_roll as roll, u.nombre_usuario as usuario, u.eliminar as estado
+	SELECT u.id_usuario, r.tipo_roll, u.email_usuario, u.activo_usuario
     FROM siegvadbd.usuarios u
     INNER JOIN siegvadbd.roll r on r.tipo_roll = u.tipo_roll
 	WHERE u.email_usuario = usuario and r.tipo_roll = 'Cliente';
@@ -231,7 +266,7 @@ USE `siegvadbd`$$
 DROP PROCEDURE IF EXISTS `getUsuariosEmpleados`;
 CREATE PROCEDURE `getUsuariosEmpleados` ()
 BEGIN
-	SELECT u.id_usuario, r.tipo_roll as roll, e.id_empleado, e.fecha_creacion_empleado, e.apellido_empleado, e.nombre_empleado, ee.tipo_estado_empleado 
+	SELECT u.id_usuario, r.tipo_roll as roll, e.id_empleado, e.fecha_creacion_empleado, e.apellido_empleado, e.nombre_empleado, e.email_empleado,ee.tipo_estado_empleado 
     FROM siegvadbd.usuarios u
     INNER JOIN siegvadbd.roll r on r.tipo_roll = u.tipo_roll
 	INNER JOIN siegvadbd.empleados e on e.id_usuario = u.id_usuario
@@ -309,7 +344,7 @@ BEGIN
 	DECLARE i_email INT;
 	SELECT id_cliente into i_email
 	FROM siegvadbd.clientes
-	WHERE email_cliente = clientes;
+	WHERE email_cliente = email_cliente_r;
 
 	IF i_email IS NULL THEN
 		INSERT INTO siegvadbd.clientes (id_usuario,email_cliente,nombre_cliente,apellido_cliente,direccion_cliente,telefono_cliente)
@@ -331,10 +366,9 @@ BEGIN
 	FROM siegvadbd.clientes
 	WHERE email_cliente = email_cliente_r;
 
-	IF i_email IS NULL THEN
+	IF i_email IS NOT NULL THEN
 		UPDATE siegvadbd.clientes
-		SET id_usuario=id_usuario_r,
-			email_cliente=email_cliente_r,
+		SET email_cliente=email_cliente_r,
 			nombre_cliente=nombre_cliente_r,
 			apellido_cliente=apellido_cliente_r,
 			direccion_cliente=direccion_cliente_r,
@@ -343,4 +377,100 @@ BEGIN
 	END IF;
 END$$
 DELIMITER ;
+/*Creacion de Orden*/
+DELIMITER $$
+USE `siegvadbd`$$
+DROP PROCEDURE IF EXISTS `setOrden`;
+CREATE PROCEDURE `setOrden` (IN id_cliente_r int(11), IN id_empleado_r int(11), IN direccion_orden_r varchar(50), IN latitud_direccion_orden_r varchar(200), IN longitud_direccion_orden_r varchar(200),IN fecha_entrega_orden_r date, IN total_orden_r int(11))
+BEGIN
+	INSERT INTO siegvadbd.orden (id_cliente, id_empleado, direccion_orden, latitud_direccion_orden, longitud_direccion_orden, fecha_entrega_orden, total_orden)
+	VALUES (id_cliente_r, id_empleado_r, direccion_orden_r, latitud_direccion_orden_r, longitud_direccion_orden_r, fecha_entrega_orden_r, total_orden_r);
+	SELECT LAST_INSERT_ID() as id_orden;
+END$$
+DELIMITER ;
+/*Actualizacion del estado de la orden*/
+DELIMITER $$
+USE `siegvadbd`$$
+DROP PROCEDURE IF EXISTS `updEstadoOrden`;
+CREATE PROCEDURE `updEstadoOrden` (IN id_orden_r int(11), IN id_estado_r int(11))
+BEGIN
+	UPDATE siegvadbd.orden 
+	set id_estado = id_estado_r
+	where id_orden = id_orden_r;
+END$$
+DELIMITER ;
+/*Creacion del pago*/
+DELIMITER $$
+USE `siegvadbd`$$
+DROP PROCEDURE IF EXISTS `setPagos`;
+CREATE PROCEDURE `setPagos` (IN id_estado_pago_r int(11), IN id_orden_r int(11), IN valor_pago_r int(11), IN descuento_pago_r int(11))
+BEGIN
+	INSERT INTO siegvadbd.orden (id_estado_pago, id_orden, valor_pago, descuento_pago)
+	VALUES (id_estado_pago_r, id_orden_r, valor_pago_r, descuento_pago_r);
+	SELECT LAST_INSERT_ID() as id_pago;
+END$$
+DELIMITER ;
+/*Actualizacion del estado del pago*/
+DELIMITER $$
+USE `siegvadbd`$$
+DROP PROCEDURE IF EXISTS `updEstadoPagos`;
+CREATE PROCEDURE `updEstadoPagos` (IN id_pago_r int(11), IN id_estado_r int(11))
+BEGIN
+	UPDATE siegvadbd.orden 
+	set id_estado_pago = id_estado_r
+	where id_pago = id_pago_r;
+END$$
+DELIMITER ;
+/*Creacion de producto*/
+DELIMITER $$
+USE `siegvadbd`$$
+DROP PROCEDURE IF EXISTS `setProducto`;
+CREATE PROCEDURE `setProducto` (IN codigo_producto_r varchar(60), IN nombre_producto_r varchar(50), IN descripcion_producto_r varchar(300), IN precio_producto_r int(11), IN oferta_producto_r boolean, IN descuento_producto_r int(11), IN path_producto_r varchar(100))
+BEGIN
+	DECLARE i_producto INT;
+	SELECT id_producto into i_producto
+	FROM siegvadbd.productos
+	WHERE codigo_producto = codigo_producto_r;
 
+	IF i_producto IS NULL THEN
+		INSERT INTO siegvadbd.productos (codigo_producto, nombre_producto, descripcion_producto, precio_producto, oferta_producto, descuento_producto, path_producto)
+		VALUES (codigo_producto_r, nombre_producto_r, descripcion_producto_r, precio_producto_r, oferta_producto_r, descuento_producto_r, path_producto_r);
+		SELECT LAST_INSERT_ID() as id_producto;
+	ELSE
+		SELECT i_producto as id_producto;
+	END IF;
+END$$
+DELIMITER ;
+
+/*Creacion del setProductosTallas*/
+DELIMITER $$
+USE `siegvadbd`$$
+DROP PROCEDURE IF EXISTS `setProductosTallas`;
+CREATE PROCEDURE `setProductosTallas` (IN codigo_producto_r varchar(60), IN id_talla_r int(11), IN cantidad_productos_r int(11))
+BEGIN
+
+	DECLARE i_producto INT;
+	SELECT id_producto into i_producto
+	FROM siegvadbd.productos
+	WHERE codigo_producto = codigo_producto_r;
+
+	IF i_producto IS NULL THEN
+		INSERT INTO siegvadbd.productos_por_tallas (id_producto, id_talla, cantidad_productos)
+		VALUES (i_producto, id_talla_r, cantidad_productos_r);
+		SELECT LAST_INSERT_ID() as id_productos_por_tallas;
+	ELSE
+		SELECT null as id_productos_por_tallas, 1 as exist_cliente;
+	END IF;
+END$$
+DELIMITER ;
+/*Creacion del setProductosTallas*/
+DELIMITER $$
+USE `siegvadbd`$$
+DROP PROCEDURE IF EXISTS `setProductosOrden`;
+CREATE PROCEDURE `setProductosOrden` (IN id_productos_por_tallas_r int(11), IN id_orden_r int(11), IN cantidad_productos_r int(11))
+BEGIN
+	INSERT INTO siegvadbd.productos_por_orden (id_productos_por_tallas, id_talla, cantidad_productos)
+	VALUES (id_productos_por_tallas_r, id_orden_r, cantidad_productos_r);
+	SELECT LAST_INSERT_ID() as id_productos_por_orden;
+END$$
+DELIMITER ;

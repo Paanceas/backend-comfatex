@@ -9,7 +9,7 @@
 
     function get(){
         $res = $_GET;
-        $api = new SiegvadApi(false,null, null, false);
+        $api = new SiegvadApi(false, null, null, false);
         $db = new GlobalHandler();
         $response = $db->getValid($res);
         $api->echoResponse($response->status, $response);

@@ -76,6 +76,8 @@ CREATE TABLE `vistas` (
 `activo` boolean NOT NULL DEFAULT 1,
 PRIMARY KEY(`id_vista`))
 ENGINE=InnoDB DEFAULT CHARSET=utf8;
+INSERT INTO `siegvadbd`.`vistas` (`nombre_vista`,`path_vista`,`icon_vista`)
+VALUES ('Dashboard','/comfatex','bx bx-grid-alt'), ('Vistas','/comfatex/views','bx bxs-window-alt');
 
 /*================
 TABLA ROLL POR VISTAS
@@ -89,6 +91,8 @@ PRIMARY KEY(`id_roll_por_vistas`),
 FOREIGN KEY (`id_vista`) REFERENCES `vistas` (`id_vista`),
 FOREIGN KEY (`tipo_roll`) REFERENCES `roll` (`tipo_roll`))
 ENGINE=InnoDB DEFAULT CHARSET=utf8;
+INSERT INTO `siegvadbd`.`roll_por_vistas` (`id_vista`,`tipo_roll`)
+VALUES (1,'Administrador'), (2,'Administrador'), (1,'Asistente'),  (1,'Cliente'), (1,'Vendedor');
 
 /*================
 TABLA USUARIOS
