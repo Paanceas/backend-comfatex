@@ -92,7 +92,7 @@ FOREIGN KEY (`id_vista`) REFERENCES `vistas` (`id_vista`),
 FOREIGN KEY (`tipo_roll`) REFERENCES `roll` (`tipo_roll`))
 ENGINE=InnoDB DEFAULT CHARSET=utf8;
 INSERT INTO `siegvadbd`.`roll_por_vistas` (`id_vista`,`tipo_roll`)
-VALUES (1,'Administrador'), (2,'Administrador'), (1,'Asistente');
+VALUES (1,'Administrador'), (2,'Administrador'), (1,'Asistente'),  (1,'Cliente'), (1,'Vendedor');
 
 /*================
 TABLA USUARIOS
