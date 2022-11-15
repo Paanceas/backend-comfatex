@@ -435,6 +435,7 @@ BEGIN
 	IF i_producto IS NULL THEN
 		INSERT INTO siegvadbd.productos (codigo_producto, nombre_producto, descripcion_producto, precio_producto, oferta_producto, descuento_producto, path_producto)
 		VALUES (codigo_producto_r, nombre_producto_r, descripcion_producto_r, precio_producto_r, oferta_producto_r, descuento_producto_r, path_producto_r);
+		call siegvadbd.setProductosTallas(codigo_producto_r, 1, 4);
 		SELECT LAST_INSERT_ID() as id_producto;
 	ELSE
 		SELECT i_producto as id_producto;

@@ -21,6 +21,8 @@ CREATE TABLE `tallas` (
 PRIMARY KEY(`id_talla`),
 UNIQUE(`talla`))
 ENGINE=InnoDB DEFAULT CHARSET=utf8;
+INSERT INTO `siegvadbd`.`tallas` (`talla`,`peso_minimo`,`peso_maximo`,`cintura_minima`,`cintura_maxima`,`cadera_minima`,`cadera_maxima`)
+VALUES ('xs',42,48,53,59,78,84);
 
 /*================
 TABLA ESTADO
