@@ -454,12 +454,12 @@ BEGIN
 	FROM siegvadbd.productos
 	WHERE codigo_producto = codigo_producto_r;
 
-	IF i_producto IS NULL THEN
+	IF i_producto IS NOT NULL THEN
 		INSERT INTO siegvadbd.productos_por_tallas (id_producto, id_talla, cantidad_productos)
 		VALUES (i_producto, id_talla_r, cantidad_productos_r);
-		SELECT LAST_INSERT_ID() as id_productos_por_tallas;
+		SELECT LAST_INSERT_ID() as id_productos_por_tallas, 0 as exist_productos_por_tallas;
 	ELSE
-		SELECT null as id_productos_por_tallas, 1 as exist_cliente;
+		SELECT null as id_productos_por_tallas, 1 as exist_productos_por_tallas;
 	END IF;
 END$$
 DELIMITER ;
