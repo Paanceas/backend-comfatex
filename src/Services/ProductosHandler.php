@@ -12,10 +12,33 @@ class ProductosHandler {
         $this->global = new CallBD();
     }
 
-    public function getProductSales()
+    public function getProductSales($res)
     {
-        $sql = "CALL siegvadbd.getProductSales();";
-        return $this->global->callDB($sql, 'Consulta Porductos ', true);
+        if (isset($res['ALL_PRODUCTS'])){
+            $sql = "CALL siegvadbd.getProductSales();";
+            return $this->global->callDB($sql, 'Consulta Productos ', true);
+        }else {
+            $sql = "CALL siegvadbd.getProductAll();";
+        return $this->global->callDB($sql, 'Consulta Productos ', true);
+        }
+        
+    }
+
+    public function getProductSizes($res)
+    {
+        $sql = "CALL siegvadbd.getProductSizes('".$res['codigo_producto']."');";
+        return $this->global->callDB($sql, 'Consulta Producto Tallas ', true);
+    }
+
+    public function setProduct($res)
+    {
+        try {
+            $sql = "CALL siegvadbd.setProducto('".$res['codigo_producto']."','".$res['nombre_producto']."','".$res['descripcion_producto']."',".$res['precio_producto'].",".$res['oferta_producto'].",".$res['descuento_producto'].",'".$res['path_producto']."');";
+            $this->global->callDBReturn($sql, 'id_producto');
+            return $this->global->resolveCallBD(true, "Producto creada exitosamente");
+        } catch (Exception $e) {
+            return $this->global->resolveCallBD(false, $e);
+        }
     }
 }
 
